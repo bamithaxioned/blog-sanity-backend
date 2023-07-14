@@ -1,78 +1,70 @@
-// schemas/pet.js
-import category from './Category';
 export default {
+  title: 'Blog',
   name: 'blog',
   type: 'document',
-	title: 'Blog',
   fields: [
     {
+      title: 'Title',
       name: 'title',
       type: 'string',
-      title: 'Title'
+      validation: (Rule) => Rule.required(),
     },
     {
-      name: 'hortDescription',
-      type: 'string',
-      title: 'Short Description'
+      title: 'Slug',
+      name: 'slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 200, // will be ignored if slugify is set
+        slugify: input => input
+                             .toLowerCase()
+                             .replace(/\s+/g, '-')
+                             .slice(0, 200)
+      }
     },
     {
       name: 'content',
-      title: 'Content',
       type: 'array',
+      title: 'Content',
       of: [
         {
           type: 'block'
         },
         {
-          type: 'image',
-          fields: [
-            {
-              type: 'text',
-              name: 'alt',
-              title: 'Alternative text',
-              description: `Some of your visitors cannot see images, 
-                be they blind, color-blind, low-sighted; 
-                alternative text is of great help for those 
-                people that can rely on it to have a good idea of 
-                what\'s on your page.`,
-              options: {
-                isHighlighted: true
-              }
-            }
-          ]
+          type: 'image'
+        },
+      ]
+    },
+    {
+      title: 'Banner Image',
+      name: 'bannerimage',
+      type: 'image',
+      options: {
+        hotspot: true // <-- Defaults to false
+      },
+      fields: [
+        {
+          title: 'Alt',
+          name: 'alt',
+          type: 'string',
         }
       ]
     },
     {
-      title: 'Created At',
-      name: 'CreatedAt',
+      title: 'Publish Date',
+      name: 'publishdate',
       type: 'datetime',
       options: {
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'YYYY-MM-DD',
         timeFormat: 'HH:mm',
-        timeStep: 15,
         calendarTodayLabel: 'Today'
-      }
+      },
     },
     {
-      title: 'Address',
-      name: 'address',
-      type: 'object',
-      fields: [
-        {name: 'street', type: 'string', title: 'Street name'},
-        {name: 'streetNo', type: 'string', title: 'Street number'},
-        {name: 'city', type: 'string', title: 'City'}
-      ]
-    },
-    {
-      title: 'Category',
-      name: 'category',
-      type: 'string',
-      options: {
-        list: [
-          ...category
-        ],
-      }
+      title: 'Author',
+      name: 'authorName',
+      type: 'reference',
+      to: [ {type: 'author'} ]
     }
   ]
 }
